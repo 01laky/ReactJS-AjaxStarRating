@@ -1,14 +1,7 @@
-.inline-element {
-    display: inline-block !important;
-}
-
-.stars-check {
-    display: none;
-}
-
-.star-label {
+.star {
     font-size: 25px !important;
     color: #000000;
+    cursor: pointer;
 }
 
 .rating-area {

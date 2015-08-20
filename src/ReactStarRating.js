@@ -1,57 +1,63 @@
-/** @jsx React.DOM */
+
+
 var Rating = React.createClass({
 
     getInitialState: function () {
-        return {rating: 0, data: []};
-    },
-    handleGetScore: function (object) {
-        this.createData(object);
+        return {rating: 0};
     },
     createData: function (object) {
         var self = this;
         var data = [];
         for (var i = 0; i < 5; i++) {
-            var checked = object.value > i ? 'checked' : "";
+            var checked = object.rating > i ? 'checked' : "";
             var starData = {value: i, checked: checked};
             data.push(starData);
         }
 
-        this.setState({data: data});
+    },
+    handleLoadData: function(){
+        var self = this;
+        $.get(
+            self.props.getLink,
+            {data: self.props.ratingId},
+            function (result) {
+                self.setState({rating: result.rating});
+            }
+        );
     },
     componentDidMount: function () {
         var self = this;
-        $.getJSON(
-            this.props.link,
-            function (result) {
-                self.handleGetScore(result);
-            });
+        self.handleLoadData();
     },
     handleChange: function (index) {
         var self = this;
-        $.getJSON(
-            this.props.set,
-            {data: index},
-            function (result) {
-                self.handleGetScore(result);
-            });
+        var rating = index;
+        var data = {rating: rating, id: self.props.ratingId};
+        self.setState({rating: rating});
+        $.post(
+            this.props.setLink,
+            {data: data}
+        );
     },
     render: function () {
         var self = this;
-        return (<div className={'rating-area'}>
-                    {self.state.data.map(function (rating, index) {
-                        var star = rating.checked ? '★' : '☆';
-                        return (<label className={'star-label'} for={'star-id-'.index}> {star}
-                            <input id={'star-id-'.index} className={'stars-check'} checked={rating.checked} onClick={ function () {
-                                self.handleChange(index)
-                            } }  type="checkbox" value={rating.value}/>
-                        </label>);
-                    }) }
-        </div>
+        var stars = [];
+        for (var i = 1; i <= 5; i++) {
+            if(i <= self.state.rating){
+                stars.push(<span className='star' onClick={ self.handleChange.bind(self, i)}>★</span>);
+            }else {
+                stars.push(<span className='star' onClick={ self.handleChange.bind(self, i)}>☆</span>);
+            }
+        }
+        return (
+            <div className="rating-area">
+                {stars}
+            </div>
         );
     }
 });
 
 React.render(
-    <Rating link={handleGetNamesLink} set={handleChangeRating} />,
+    <Rating ratingId={1}  getLink={handleGetNamesLink} setLink={handleChangeRating} />,
     document.getElementById('component-container')
 );
