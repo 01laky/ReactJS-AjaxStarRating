@@ -3,7 +3,7 @@
 var Rating = React.createClass({
 
     getInitialState: function () {
-        return {rating: 0};
+        return {rating: 0, basic: 0};
     },
     createData: function (object) {
         var self = this;
@@ -21,7 +21,7 @@ var Rating = React.createClass({
             self.props.getLink,
             {data: self.props.ratingId},
             function (result) {
-                self.setState({rating: result.rating});
+                self.setState({rating: result.rating, basic: result.rating});
             }
         );
     },
@@ -33,20 +33,28 @@ var Rating = React.createClass({
         var self = this;
         var rating = index;
         var data = {rating: rating, id: self.props.ratingId};
-        self.setState({rating: rating});
+        self.setState({rating: rating, basic: rating});
         $.post(
             this.props.setLink,
             {data: data}
         );
+    },
+    handleHoverStars: function (index) {
+        var self = this;
+        self.setState({rating: index})
     },
     render: function () {
         var self = this;
         var stars = [];
         for (var i = 1; i <= 5; i++) {
             if(i <= self.state.rating){
-                stars.push(<span className='star' onClick={ self.handleChange.bind(self, i)}>★</span>);
+                stars.push(<span onMouseOut={self.handleHoverStars.bind(self, self.state.basic)}
+                                 onMouseOver={self.handleHoverStars.bind(self, i)} className='starYellow'
+                                 onClick={ self.handleChange.bind(self, i)}>★</span>);
             }else {
-                stars.push(<span className='star' onClick={ self.handleChange.bind(self, i)}>☆</span>);
+                stars.push(<span onMouseOut={self.handleHoverStars.bind(self, self.state.basic)}
+                                 onMouseOver={self.handleHoverStars.bind(self, i)} className='star'
+                                 onClick={ self.handleChange.bind(self, i)}>☆</span>);
             }
         }
         return (
