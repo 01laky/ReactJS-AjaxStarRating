@@ -1,0 +1,20 @@
+.inline-element {
+    display: inline-block !important;
+}
+
+.stars-check {
+    display: none;
+}
+
+.star-label {
+    font-size: 25px !important;
+    color: #000000;
+}
+
+.rating-area {
+    border: 2px solid #000000;
+    padding: 3px;
+    width: 120px;
+    margin-left: 100px;
+    margin-top: 100px;
+}
